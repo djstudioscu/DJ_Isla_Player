@@ -15,7 +15,7 @@ jobs:
         with:
           dotnet-version: '8.0.x'
       - name: Restore & Pack
-        run: dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o ./artifacts
+  run: dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o ./artifacts -p:EnableWindowsTargeting=true
       - name: Push to GitHub Packages
         env:
           DOTNET_NUGET_API_KEY: ${{ secrets.GITHUB_TOKEN }}
