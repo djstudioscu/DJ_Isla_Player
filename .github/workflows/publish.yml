@@ -1,51 +1,47 @@
-name: Release App (EXE)
+name: Release DJ Isla Player (EXE)
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*' # Se activa cuando subes un tag que empieza con v (ej. v0.1.0)
 
 jobs:
-  build-and-release:
-    # ESENCIAL: Debe decir windows-latest para evitar el error NETSDK1100
+  build:
     runs-on: windows-latest
-    permissions:
-      contents: write
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Asegúrate de que coincida con tu versión de .NET
 
-      - name: Restore
-        run: dotnet restore ./DJ_Isla_Player/DJ_Isla_Player.csproj
+    - name: Restore dependencies
+      run: dotnet restore **/*.csproj
 
-      - name: Publish (Generar EXE único)
-        # Creamos un ejecutable que contiene todo lo necesario
-        run: |
-          dotnet publish ./VideoPlayerApp/VideoPlayerApp.csproj `
-            -c Release `
-            -o ./publish `
-            --runtime win-x64 `
-            --self-contained true `
-            -p:PublishSingleFile=true `
-            -p:PublishReadyToRun=true `
-            -p:IncludeNativeLibrariesForSelfExtract=true
+    - name: Build Application
+      run: dotnet build **/*.csproj --configuration Release --no-restore
 
-      - name: Zip Release
-        # Comprimimos la carpeta para que el usuario descargue un ZIP
-        run: Compress-Archive -Path ./publish/* -DestinationPath ./DJ_Isla_Player_v${{ github.ref_name }}.zip
+    - name: Publish EXE
+      run: dotnet publish **/*.csproj --configuration Release --output ./publish -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./DJ_Isla_Player_v${{ github.ref_name }}.zip
-          name: Release ${{ github.ref_name }}
-          tag_name: ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Zip Release
+      shell: powershell
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./DJ_Isla_Player_v${{ github.ref_name }}.zip
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./DJ_Isla_Player_v${{ github.ref_name }}.zip
+        name: DJ Isla Player ${{ github.ref_name }}
+        body: |
+          🚀 ¡Nueva versión de DJ Isla Player lanzada!
+          
+          ✅ Motor LibVLC actualizado.
+          🌐 Navegador interno para videos online añadido.
+          ⚖️ Aviso legal de responsabilidad incluido.
+          🇨🇺 100% Cubano.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
