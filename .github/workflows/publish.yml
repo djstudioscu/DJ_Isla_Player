@@ -1,0 +1,22 @@
+name: Publish NuGet
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore & Pack
+        run: dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o ./artifacts
+      - name: Push to GitHub Packages
+        env:
+          DOTNET_NUGET_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet nuget push ./artifacts/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key $DOTNET_NUGET_API_KEY --skip-duplicate

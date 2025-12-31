@@ -7,6 +7,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+
+    <!-- NuGet package metadata -->
+    <PackageId>DJIsla.Player</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>DJStudios Cuba</Authors>
+    <Description>Reproductor de video DJ ISLA PLAYER</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/djstudioscu/DJ_Isla_Player</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

@@ -11,8 +11,8 @@
         PreviewKeyDown="Window_PreviewKeyDown"
         DragOver="Window_DragOver"
         Drop="Window_Drop">
-
     <!-- ================== ESTILOS ================== -->
+
     <Window.Resources>
 
         <!-- Botones con iconos -->
