@@ -21,7 +21,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore ./VideoPlayerApp/VideoPlayerApp.csproj
+        run: dotnet restore ./DJ_Isla_Player/DJ_Isla_Player.csproj
 
       - name: Publish (Generar EXE único)
         # Creamos un ejecutable que contiene todo lo necesario
