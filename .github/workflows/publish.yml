@@ -21,13 +21,14 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore & Pack
-        # Se extrae la versión del tag (ej. v1.0.0 -> 1.0.0) para el paquete
         run: |
           $version = "${{ github.ref_name }}".TrimStart('v')
-          dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o ./artifacts /p:PackageVersion=$version
+          # Usamos una ruta más explícita para evitar errores de carpeta
+          dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o out /p:PackageVersion=$version
 
       - name: Push to GitHub Packages
         env:
           DOTNET_NUGET_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+        # Cambiamos la ruta a ./out/ y usamos una sintaxis más robusta para PowerShell
         run: |
-          dotnet nuget push ./artifacts/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key $env:DOTNET_NUGET_API_KEY --skip-duplicate
+          dotnet nuget push "out\*.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key $env:DOTNET_NUGET_API_KEY --skip-duplicate
