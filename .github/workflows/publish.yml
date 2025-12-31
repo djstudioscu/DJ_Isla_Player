@@ -1,4 +1,4 @@
-name: Publish NuGet
+name: Release App (EXE)
 
 on:
   push:
@@ -6,11 +6,10 @@ on:
       - 'v*.*.*'
 
 jobs:
-  publish:
+  build-and-release:
     runs-on: windows-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write  # Necesario para crear la Release y subir archivos
 
     steps:
       - uses: actions/checkout@v4
@@ -23,17 +22,22 @@ jobs:
       - name: Restore
         run: dotnet restore ./VideoPlayerApp/VideoPlayerApp.csproj
 
-      - name: Build
-        # Esto genera los archivos necesarios como el runtimeconfig.json
-        run: dotnet build ./VideoPlayerApp/VideoPlayerApp.csproj -c Release --no-restore
-
-      - name: Pack
+      - name: Publish (Generate EXE)
+        # Este comando crea una carpeta con todo lo necesario para que el EXE funcione
         run: |
-          $version = "${{ github.ref_name }}".TrimStart('v')
-          dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o out --no-build /p:PackageVersion=$version
+          dotnet publish ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o ./publish --runtime win-x64 --self-contained false -p:PublishSingleFile=true -p:PublishReadyToRun=true
 
-      - name: Push to GitHub Packages
+      - name: Zip Release
+        # Comprimimos la carpeta publish para que el usuario descargue un solo archivo
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./DJ_Isla_Player_Windows.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./DJ_Isla_Player_Windows.zip
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
         env:
-          DOTNET_NUGET_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          dotnet nuget push "out\*.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key $env:DOTNET_NUGET_API_KEY --skip-duplicate
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
