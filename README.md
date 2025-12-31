@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Versión-2.0.0-blue?style=for-the-badge" alt="Versión">
+  <img src="https://img.shields.io/badge/Versión-2.0.6-blue?style=for-the-badge" alt="Versión">
   <img src="https://img.shields.io/badge/Hecho_en-Cuba-red?style=for-the-badge" alt="Cuba">
   <img src="https://img.shields.io/badge/.NET-8.0-purple?style=for-the-badge" alt=".NET 8">
   <img src="https://img.shields.io/badge/Licencia-MIT-green?style=for-the-badge" alt="Licencia">
