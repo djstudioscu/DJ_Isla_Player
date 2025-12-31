@@ -180,7 +180,7 @@ namespace VideoPlayerApp
         private void LoadHistory() { if (File.Exists(historyFile)) { history = JsonSerializer.Deserialize<List<HistoryItem>>(File.ReadAllText(historyFile)) ?? new(); RefreshHistoryMenu(); } }
 
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
-        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\nV2.0.5", "DJStudios Cuba");
+        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\nV2.0.6", "DJStudios Cuba");
         private void Forward_Click(object sender, RoutedEventArgs e) => _player.Time += 10000;
         private void Rewind_Click(object sender, RoutedEventArgs e) => _player.Time = Math.Max(0, _player.Time - 10000);
         private void Window_DragOver(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
