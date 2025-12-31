@@ -48,4 +48,8 @@ jobs:
           draft: false
           prerelease: false
         env:
+<<<<<<< HEAD
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+=======
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+>>>>>>> da6e110081d8c1803517e9ccdc036a26b7b825c9
