@@ -69,7 +69,7 @@ namespace VideoPlayerApp
         // ===================== MENÚ =====================
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("DJ ISLA PLAYER\nVersión 1.0\nDesarrollado por DJStudios Cuba.", "Acerca de", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("DJ ISLA PLAYER\nVersión 0.0.1\nDesarrollado por DJStudios Cuba.", "Acerca de", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
