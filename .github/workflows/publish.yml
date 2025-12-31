@@ -7,9 +7,10 @@ on:
 
 jobs:
   build-and-release:
+    # ESENCIAL: Debe decir windows-latest para evitar el error NETSDK1100
     runs-on: windows-latest
     permissions:
-      contents: write  # Necesario para crear la Release y subir archivos
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -22,19 +23,26 @@ jobs:
       - name: Restore
         run: dotnet restore ./VideoPlayerApp/VideoPlayerApp.csproj
 
-      - name: Publish (Generate EXE)
-        # Este comando crea una carpeta con todo lo necesario para que el EXE funcione
+      - name: Publish (Generar EXE único)
+        # Creamos un ejecutable que contiene todo lo necesario
         run: |
-          dotnet publish ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o ./publish --runtime win-x64 --self-contained false -p:PublishSingleFile=true -p:PublishReadyToRun=true
+          dotnet publish ./VideoPlayerApp/VideoPlayerApp.csproj `
+            -c Release `
+            -o ./publish `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:PublishReadyToRun=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true
 
       - name: Zip Release
-        # Comprimimos la carpeta publish para que el usuario descargue un solo archivo
-        run: Compress-Archive -Path ./publish/* -DestinationPath ./DJ_Isla_Player_Windows.zip
+        # Comprimimos la carpeta para que el usuario descargue un ZIP
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./DJ_Isla_Player_v${{ github.ref_name }}.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./DJ_Isla_Player_Windows.zip
+          files: ./DJ_Isla_Player_v${{ github.ref_name }}.zip
           name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           draft: false
