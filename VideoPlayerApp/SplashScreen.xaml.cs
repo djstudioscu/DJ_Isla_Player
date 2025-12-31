@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace VideoPlayerApp
+namespace DJ_Isla_Player
 {
     public partial class SplashScreen : Window
     {

@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace VideoPlayerApp
+namespace DJ_Isla_Player
 {
     public partial class MainWindow : Window
     {

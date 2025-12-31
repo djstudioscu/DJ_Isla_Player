@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 
-namespace VideoPlayerApp
+namespace DJ_Isla_Player
 {
     public partial class App : Application
     {
