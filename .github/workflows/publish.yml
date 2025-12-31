@@ -20,15 +20,20 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore & Pack
+      - name: Restore
+        run: dotnet restore ./VideoPlayerApp/VideoPlayerApp.csproj
+
+      - name: Build
+        # Esto genera los archivos necesarios como el runtimeconfig.json
+        run: dotnet build ./VideoPlayerApp/VideoPlayerApp.csproj -c Release --no-restore
+
+      - name: Pack
         run: |
           $version = "${{ github.ref_name }}".TrimStart('v')
-          # Usamos una ruta más explícita para evitar errores de carpeta
-          dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o out /p:PackageVersion=$version
+          dotnet pack ./VideoPlayerApp/VideoPlayerApp.csproj -c Release -o out --no-build /p:PackageVersion=$version
 
       - name: Push to GitHub Packages
         env:
           DOTNET_NUGET_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-        # Cambiamos la ruta a ./out/ y usamos una sintaxis más robusta para PowerShell
         run: |
           dotnet nuget push "out\*.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key $env:DOTNET_NUGET_API_KEY --skip-duplicate
