@@ -3,7 +3,7 @@ name: Release DJ Isla Player (EXE)
 on:
   push:
     tags:
-      - 'v*' # Se activa cuando subes un tag que empieza con v (ej. v0.1.0)
+      - 'v*' # Se activa con etiquetas como v2.09, v2.10, etc.
 
 jobs:
   build:
@@ -16,16 +16,18 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x' # Asegúrate de que coincida con tu versión de .NET
+        dotnet-version: '8.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore **/*.csproj
+      # PowerShell busca el archivo .csproj automáticamente
+      run: dotnet restore (Get-ChildItem -Recurse *.csproj | Select-Object -First 1).FullName
 
     - name: Build Application
-      run: dotnet build **/*.csproj --configuration Release --no-restore
+      run: dotnet build (Get-ChildItem -Recurse *.csproj | Select-Object -First 1).FullName --configuration Release --no-restore
 
     - name: Publish EXE
-      run: dotnet publish **/*.csproj --configuration Release --output ./publish -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true
+      # Genera un único archivo ejecutable optimizado para Windows x64
+      run: dotnet publish (Get-ChildItem -Recurse *.csproj | Select-Object -First 1).FullName --configuration Release --output ./publish -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:IncludeNativeLibrariesForSelfExtract=true
 
     - name: Zip Release
       shell: powershell
@@ -37,11 +39,13 @@ jobs:
         files: ./DJ_Isla_Player_v${{ github.ref_name }}.zip
         name: DJ Isla Player ${{ github.ref_name }}
         body: |
-          🚀 ¡Nueva versión de DJ Isla Player lanzada!
+          🚀 **DJ ISLA PLAYER v${{ github.ref_name }}**
           
-          ✅ Motor LibVLC actualizado.
-          🌐 Navegador interno para videos online añadido.
-          ⚖️ Aviso legal de responsabilidad incluido.
-          🇨🇺 100% Cubano.
+          ¡Nueva actualización disponible!
+          
+          ✅ **Navegador Interno:** Mira videos online directamente en la app.
+          ✅ **Motor de Video:** Optimización con LibVLC para máxima compatibilidad.
+          ✅ **Seguridad:** Añadido descargo de responsabilidad para contenido de terceros.
+          🇨🇺 **Orgullo Nacional:** Software 100% cubano por DJStudios Cuba.
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
