@@ -42,14 +42,7 @@ namespace DJ_Isla_Player
 
         private async void InitializeBrowser() { try { await webView.EnsureCoreWebView2Async(null); } catch { } }
 
-        private void Social_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is MenuItem mi && mi.Tag != null)
-            {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = mi.Tag.ToString(), UseShellExecute = true });
-            }
-        }
-
+        // MÉTODOS DE NAVEGACIÓN Y REDES
         private void Online_Click(object sender, RoutedEventArgs e)
         {
             _player.Pause(); isPlaying = false;
@@ -63,8 +56,20 @@ namespace DJ_Isla_Player
             videoView.Visibility = Visibility.Visible;
         }
 
-        private void Legal_Click(object sender, RoutedEventArgs e) => MessageBox.Show("\U0001f6d1 Aviso Legal (Contenido de Terceros)\r\n\r\n> [!WARNING]\r\n> La sección Online conecta con sitios web de terceros. DJStudios Cuba no se responsabiliza por el contenido, la seguridad o el uso que el usuario final haga de estas páginas externas. El uso de esta función es bajo su propio riesgo.", "Aviso Legal");
+        private void Social_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi && mi.Tag != null)
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = mi.Tag.ToString(), UseShellExecute = true });
+            }
+        }
 
+        private void Legal_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Aviso Legal y Exención de Responsabilidad\r\nDJ ISLA PLAYER (en adelante, \"la Aplicación\"), desarrollada por DJStudios Cuba, es una herramienta de reproducción multimedia y navegación web. Al utilizar esta Aplicación, usted acepta los siguientes términos:\r\n\r\nContenido de Terceros: La Aplicación proporciona acceso a sitios web, servicios y contenidos de terceros (por ejemplo, mediante la sección \"Online\"). DJStudios Cuba no tiene control sobre la naturaleza, el contenido, la disponibilidad o las políticas de privacidad de dichos sitios.\r\n\r\nAusencia de Responsabilidad: DJStudios Cuba no se hace responsable por:\r\n\r\nCualquier daño, pérdida o perjuicio derivado del uso de sitios web externos.\r\n\r\nLa exactitud, legalidad o veracidad de la información mostrada en servicios de terceros.\r\n\r\nPosibles infracciones de derechos de autor cometidas por los sitios web externos vinculados.\r\n\r\nUso bajo Riesgo del Usuario: El acceso a cualquier sitio de terceros a través de la Aplicación es responsabilidad exclusiva del usuario. Se recomienda al usuario revisar los términos y condiciones de cada sitio web que visite.\r\n\r\nNo Patrocinio: La inclusión de enlaces o acceso directo a sitios externos no implica necesariamente una recomendación ni el respaldo de los puntos de vista expresados en ellos.\r\n\r\nDerechos de Autor: DJStudios Cuba respeta la propiedad intelectual. Si usted es propietario de un derecho de autor y considera que algún enlace dentro de esta aplicación infringe sus derechos, por favor contáctenos para su revisión y posible eliminación.", "Descargo de Responsabilidad");
+        }
+
+        // MÉTODOS DE REPRODUCCIÓN (Mantenidos)
         private void PlayFile(string path, long startTime)
         {
             if (!File.Exists(path)) return;
@@ -76,13 +81,13 @@ namespace DJ_Isla_Player
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog { Filter = "Video Files|*.mp4;*.mkv;*.avi" };
+            OpenFileDialog dialog = new OpenFileDialog { Filter = "Archivos de Video|*.mp4;*.mkv;*.avi;*.mov" };
             if (dialog.ShowDialog() == true) PlayFile(dialog.FileName, 0);
         }
 
         private void Play_Click(object sender, RoutedEventArgs e) { _player.Play(); isPlaying = true; }
         private void Pause_Click(object sender, RoutedEventArgs e) { _player.Pause(); isPlaying = false; }
-        private void Stop_Click(object sender, RoutedEventArgs e) { _player.Stop(); isPlaying = false; }
+        private void Stop_Click(object sender, RoutedEventArgs e) { _player.Stop(); isPlaying = false; progressTimer.Stop(); }
 
         private void ProgressTimer_Tick(object sender, EventArgs e)
         {
@@ -111,6 +116,7 @@ namespace DJ_Isla_Player
         private void ShowControls() { ControlsPanel.Opacity = 1; Mouse.OverrideCursor = null; hideControlsTimer.Stop(); hideControlsTimer.Start(); }
         private void HideControls() { if (WindowState == WindowState.Maximized) { ControlsPanel.Opacity = 0; Mouse.OverrideCursor = Cursors.None; } }
 
+        // HISTORIAL
         private void AddToHistory(string path, long time)
         {
             history.RemoveAll(h => h.Path == path);
@@ -133,7 +139,7 @@ namespace DJ_Isla_Player
         private void SaveHistory() => File.WriteAllText(historyFile, JsonSerializer.Serialize(history));
         private void LoadHistory() { if (File.Exists(historyFile)) { history = JsonSerializer.Deserialize<List<HistoryItem>>(File.ReadAllText(historyFile)) ?? new(); RefreshHistoryMenu(); } }
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
-        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\n Version 2.1.1 DJStudios Cuba", "Acerca de");
+        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\nReproductor de Video v2.1.1\nBy DJStudios Cuba", "Acerca de");
         private void Forward_Click(object sender, RoutedEventArgs e) => _player.Time += 10000;
         private void Rewind_Click(object sender, RoutedEventArgs e) => _player.Time = Math.Max(0, _player.Time - 10000);
         private void Window_DragOver(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;

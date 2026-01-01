@@ -1,4 +1,4 @@
-# 📺 DJ ISLA PLAYER — 100% CUBANO 🇨🇺
+# DJ ISLA PLAYER — 100% CUBANO 🇨🇺
 
 <p align="center">
   <img src="DJSLogo.png" alt="DJ Isla Player Logo" width="200"/>

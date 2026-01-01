@@ -1,3 +1,14 @@
 <Solution>
-  <Project Path="VideoPlayerApp/DJ Isla Player.csproj" />
+  <Configurations>
+    <BuildType Name="All" />
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="DJIslaPlayer_Setup/DJIslaPlayer_Setup.aiproj" Type="840c416c-b8f3-42bc-b0dd-f6bb14c9f8cb" Id="a212adef-c5b6-437b-acc8-e467b98831b5">
+    <BuildType Project="All" />
+    <Platform Project="?" />
+  </Project>
+  <Project Path="VideoPlayerApp/DJ Isla Player.csproj">
+    <BuildType Solution="All|*" Project="Debug" />
+  </Project>
 </Solution>
