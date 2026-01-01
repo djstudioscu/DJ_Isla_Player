@@ -63,7 +63,7 @@ namespace DJ_Isla_Player
             videoView.Visibility = Visibility.Visible;
         }
 
-        private void Legal_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJStudios Cuba no se responsabiliza por contenido de terceros.", "Aviso Legal");
+        private void Legal_Click(object sender, RoutedEventArgs e) => MessageBox.Show("\U0001f6d1 Aviso Legal (Contenido de Terceros)\r\n\r\n> [!WARNING]\r\n> La sección Online conecta con sitios web de terceros. DJStudios Cuba no se responsabiliza por el contenido, la seguridad o el uso que el usuario final haga de estas páginas externas. El uso de esta función es bajo su propio riesgo.", "Aviso Legal");
 
         private void PlayFile(string path, long startTime)
         {
@@ -133,7 +133,7 @@ namespace DJ_Isla_Player
         private void SaveHistory() => File.WriteAllText(historyFile, JsonSerializer.Serialize(history));
         private void LoadHistory() { if (File.Exists(historyFile)) { history = JsonSerializer.Deserialize<List<HistoryItem>>(File.ReadAllText(historyFile)) ?? new(); RefreshHistoryMenu(); } }
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
-        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\nDJStudios Cuba", "Acerca de");
+        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\n Version 2.1.1 DJStudios Cuba", "Acerca de");
         private void Forward_Click(object sender, RoutedEventArgs e) => _player.Time += 10000;
         private void Rewind_Click(object sender, RoutedEventArgs e) => _player.Time = Math.Max(0, _player.Time - 10000);
         private void Window_DragOver(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
