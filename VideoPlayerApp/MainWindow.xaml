@@ -33,34 +33,29 @@
     <Grid MouseMove="Grid_MouseMove">
         <Menu VerticalAlignment="Top" Height="28">
             <MenuItem Header="Archivo">
-                <MenuItem Header="Abrir Video" Click="Open_Click"/>
+                <MenuItem Header="Abrir Video Local" Click="Open_Click"/>
                 <Separator Background="#333"/>
                 <MenuItem Header="Salir" Click="Exit_Click"/>
             </MenuItem>
 
-            <MenuItem Header="Reproducción">
-                <MenuItem Header="Play" Click="Play_Click"/>
-                <MenuItem Header="Pause" Click="Pause_Click"/>
-                <MenuItem Header="Stop" Click="Stop_Click"/>
-            </MenuItem>
-
-            <MenuItem Header="Pantalla">
-                <MenuItem Header="16:9" Click="Aspect_16_9_Click"/>
-                <MenuItem Header="4:3" Click="Aspect_4_3_Click"/>
-                <MenuItem Header="Ajustar" Click="Aspect_Fit_Click"/>
-            </MenuItem>
-
-            <MenuItem Header="Historial" x:Name="HistoryMenu"/>
-
             <MenuItem Header="Online">
-                <MenuItem Header="Ver Videos Online" Click="Online_Click"/>
+                <MenuItem Header="Ver Series y Pelis" Click="Online_Click" FontWeight="Bold"/>
                 <Separator Background="#333"/>
                 <MenuItem Header="Aviso Legal" Click="Legal_Click"/>
             </MenuItem>
 
-            <MenuItem Header="Ayuda">
-                <MenuItem Header="Acerca de" Click="About_Click"/>
+            <MenuItem Header="Redes Sociales">
+                <MenuItem Header="YouTube Gamers Cuba" Click="Social_Click" Tag="https://www.youtube.com/@GamersCuba"/>
+                <MenuItem Header="YouTube DJStudios Cuba" Click="Social_Click" Tag="https://www.youtube.com/@djstudioscuba"/>
+                <Separator Background="#333"/>
+                <MenuItem Header="X Gamers Cuba" Click="Social_Click" Tag="https://x.com/GamersCuba_Team"/>
+                <MenuItem Header="X DJStudios Cuba" Click="Social_Click" Tag="https://x.com/DJStudios_Cuba"/>
+                <Separator Background="#333"/>
+                <MenuItem Header="DJ Isla Player Telegram" Click="Social_Click" Tag="https://t.me/DJIslaPlayer"/>
             </MenuItem>
+
+            <MenuItem Header="Historial" x:Name="HistoryMenu"/>
+            <MenuItem Header="Ayuda" Click="About_Click"/>
         </Menu>
 
         <vlc:VideoView x:Name="videoView" Margin="0,28,0,86"/>
@@ -70,11 +65,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Content="✖ CERRAR NAVEGADOR Y VOLVER AL REPRODUCTOR" 
-                    Background="#B22222" Foreground="White" FontWeight="Bold" Padding="8"
-                    Click="CloseBrowser_Click"/>
-            <wv2:WebView2 x:Name="webView" Grid.Row="1" 
-                          Source="https://visuales.uclv.cu/"/>
+            <Button Content="✖ CERRAR NAVEGADOR Y VOLVER AL MODO LOCAL" Background="#B22222" Foreground="White" FontWeight="Bold" Padding="10" Click="CloseBrowser_Click"/>
+            <wv2:WebView2 x:Name="webView" Grid.Row="1" Source="https://visuales.uclv.cu/"/>
         </Grid>
 
         <Border x:Name="ControlsPanel" VerticalAlignment="Bottom" Background="#1A1A1A" Padding="12" Height="86">
@@ -82,7 +74,6 @@
                 <Slider x:Name="progressBar" IsMoveToPointEnabled="True" PreviewMouseUp="ProgressBar_MouseUp"/>
                 <DockPanel Margin="0,8,0,0">
                     <TextBlock x:Name="timeText" Foreground="#AAAAAA" Text="00:00 / 00:00" VerticalAlignment="Center" DockPanel.Dock="Left"/>
-
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Style="{StaticResource IconButton}" Click="Rewind_Click">
                             <Image Source="Assets/rewind.png" Width="24"/>
@@ -97,9 +88,7 @@
                             <Image Source="Assets/forward.png" Width="24"/>
                         </Button>
                     </StackPanel>
-
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                        <Image Source="Assets/volume.png" Width="20" Margin="0,0,5,0"/>
                         <Slider x:Name="volumeSlider" Width="90" Minimum="0" Maximum="1" Value="0.5" ValueChanged="VolumeSlider_ValueChanged" VerticalAlignment="Center"/>
                         <Button Style="{StaticResource IconButton}" Click="ToggleFullScreen">
                             <Image Source="Assets/fullscreen.png" Width="20"/>

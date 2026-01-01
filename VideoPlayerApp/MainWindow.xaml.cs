@@ -19,8 +19,6 @@ namespace DJ_Isla_Player
         private DispatcherTimer progressTimer;
         private DispatcherTimer hideControlsTimer;
         private bool isPlaying = false;
-        private string currentAspect = null;
-
         private const int MaxHistory = 5;
         private readonly string historyFile = "history.json";
         private List<HistoryItem> history = new();
@@ -30,36 +28,31 @@ namespace DJ_Isla_Player
             Core.Initialize();
             _libVLC = new LibVLC();
             _player = new MediaPlayer(_libVLC);
-
             InitializeComponent();
             videoView.MediaPlayer = _player;
 
-            // Timer para la barra de progreso
             progressTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             progressTimer.Tick += ProgressTimer_Tick;
 
-            // Timer para ocultar controles
             hideControlsTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
             hideControlsTimer.Tick += (s, e) => HideControls();
 
-            Loaded += (s, e) => {
-                LoadHistory();
-                hideControlsTimer.Start();
-                InitializeBrowser();
-            };
+            Loaded += (s, e) => { LoadHistory(); InitializeBrowser(); hideControlsTimer.Start(); };
         }
 
-        private async void InitializeBrowser()
+        private async void InitializeBrowser() { try { await webView.EnsureCoreWebView2Async(null); } catch { } }
+
+        private void Social_Click(object sender, RoutedEventArgs e)
         {
-            try { await webView.EnsureCoreWebView2Async(null); }
-            catch (Exception) { MessageBox.Show("WebView2 Runtime no encontrado. Instálelo para ver videos online."); }
+            if (sender is MenuItem mi && mi.Tag != null)
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = mi.Tag.ToString(), UseShellExecute = true });
+            }
         }
 
-        // ===================== NAVEGACIÓN ONLINE =====================
         private void Online_Click(object sender, RoutedEventArgs e)
         {
-            _player?.Pause();
-            isPlaying = false;
+            _player.Pause(); isPlaying = false;
             BrowserContainer.Visibility = Visibility.Visible;
             videoView.Visibility = Visibility.Collapsed;
         }
@@ -70,65 +63,27 @@ namespace DJ_Isla_Player
             videoView.Visibility = Visibility.Visible;
         }
 
-        private void Legal_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("AVISO LEGAL - DJSTUDIOS CUBA\n\n" +
-                "El contenido visualizado en el navegador interno pertenece a terceros.\n" +
-                "DJStudios Cuba no se hace responsable por el contenido, la seguridad o el uso que el usuario haga de sitios externos.\n" +
-                "Cualquier responsabilidad recae exclusivamente en el usuario final.",
-                "Descargo de Responsabilidad", MessageBoxButton.OK, MessageBoxImage.Warning);
-        }
+        private void Legal_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJStudios Cuba no se responsabiliza por contenido de terceros.", "Aviso Legal");
 
-        // ===================== REPRODUCCIÓN =====================
         private void PlayFile(string path, long startTime)
         {
             if (!File.Exists(path)) return;
-            var media = new Media(_libVLC, new Uri(path));
-            _player.Play(media);
+            _player.Play(new Media(_libVLC, new Uri(path)));
             _player.Time = startTime;
-            progressTimer.Start();
-            isPlaying = true;
+            progressTimer.Start(); isPlaying = true;
             AddToHistory(path, startTime);
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog { Filter = "Video Files|*.mp4;*.mkv;*.avi;*.mov" };
+            OpenFileDialog dialog = new OpenFileDialog { Filter = "Video Files|*.mp4;*.mkv;*.avi" };
             if (dialog.ShowDialog() == true) PlayFile(dialog.FileName, 0);
         }
 
-        private void Play_Click(object sender, RoutedEventArgs e) { _player.Play(); isPlaying = true; ShowControls(); }
-        private void Pause_Click(object sender, RoutedEventArgs e) { _player.Pause(); isPlaying = false; ShowControls(); }
-        private void Stop_Click(object sender, RoutedEventArgs e) { _player.Stop(); isPlaying = false; progressTimer.Stop(); }
+        private void Play_Click(object sender, RoutedEventArgs e) { _player.Play(); isPlaying = true; }
+        private void Pause_Click(object sender, RoutedEventArgs e) { _player.Pause(); isPlaying = false; }
+        private void Stop_Click(object sender, RoutedEventArgs e) { _player.Stop(); isPlaying = false; }
 
-        // ===================== ASPECT RATIO =====================
-        private void Aspect_16_9_Click(object sender, RoutedEventArgs e) => SetAspectRatio("16:9");
-        private void Aspect_4_3_Click(object sender, RoutedEventArgs e) => SetAspectRatio("4:3");
-        private void Aspect_Fit_Click(object sender, RoutedEventArgs e) => SetAspectRatio(null);
-
-        private void SetAspectRatio(string ratio)
-        {
-            currentAspect = ratio;
-            if (string.IsNullOrEmpty(ratio)) { videoView.Width = double.NaN; videoView.Height = double.NaN; }
-            else RecalculateAspect();
-        }
-
-        private void RecalculateAspect()
-        {
-            if (currentAspect == "16:9") ApplyAspect(16, 9);
-            else if (currentAspect == "4:3") ApplyAspect(4, 3);
-        }
-
-        private void ApplyAspect(int w, int h)
-        {
-            double availW = ActualWidth;
-            double availH = ActualHeight - 114;
-            double target = (double)w / h;
-            if ((availW / availH) > target) { videoView.Height = availH; videoView.Width = availH * target; }
-            else { videoView.Width = availW; videoView.Height = availW / target; }
-        }
-
-        // ===================== UI Y TECLADO =====================
         private void ProgressTimer_Tick(object sender, EventArgs e)
         {
             if (_player.Length <= 0) return;
@@ -156,7 +111,6 @@ namespace DJ_Isla_Player
         private void ShowControls() { ControlsPanel.Opacity = 1; Mouse.OverrideCursor = null; hideControlsTimer.Stop(); hideControlsTimer.Start(); }
         private void HideControls() { if (WindowState == WindowState.Maximized) { ControlsPanel.Opacity = 0; Mouse.OverrideCursor = Cursors.None; } }
 
-        // ===================== HISTORIAL =====================
         private void AddToHistory(string path, long time)
         {
             history.RemoveAll(h => h.Path == path);
@@ -178,9 +132,8 @@ namespace DJ_Isla_Player
 
         private void SaveHistory() => File.WriteAllText(historyFile, JsonSerializer.Serialize(history));
         private void LoadHistory() { if (File.Exists(historyFile)) { history = JsonSerializer.Deserialize<List<HistoryItem>>(File.ReadAllText(historyFile)) ?? new(); RefreshHistoryMenu(); } }
-
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
-        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\nV2.1.0", "DJStudios Cuba");
+        private void About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("DJ ISLA PLAYER\nDJStudios Cuba", "Acerca de");
         private void Forward_Click(object sender, RoutedEventArgs e) => _player.Time += 10000;
         private void Rewind_Click(object sender, RoutedEventArgs e) => _player.Time = Math.Max(0, _player.Time - 10000);
         private void Window_DragOver(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
